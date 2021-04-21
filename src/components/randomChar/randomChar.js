@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
-import './randomChar.css';
 import gotService from '../../services/gotService';
 import Spinner from '../spinner';
 import ErrorMessage from '../errorMessage';
+import PropTypes from 'prop-types';
+
+import './randomChar.scss';
 
 export default class RandomChar extends Component {
 
@@ -12,41 +14,47 @@ export default class RandomChar extends Component {
         char: {},
         loading: true,
         error: false
-    }
+    };
+
+    static defaultProps = {
+        interval: 15000
+    };
+
+    static propTypes = {
+        interval: PropTypes.number
+    };
 
     componentDidMount() {
         this.updateChar();
-        this.timerId = setInterval(this.updateChar, 4000);
-    }
+        this.timerId = setInterval(this.updateChar, this.props.interval);
+    };
 
     componentWillUnmount() {
         clearInterval(this.timerId);
-    }
+    };
 
     onCharLoaded = (char) => {
         this.setState({
             char,
             loading: false
         });
-    }
+    };
 
     onError = (err) => {
         this.setState({
             error: true,
             loading: false
-        })
-    }
+        });
+    };
 
     updateChar = () => {
         const id = Math.floor(Math.random() * 140 + 25);
         this.gotService.getCharacter(id)
             .then(this.onCharLoaded)
             .catch(this.onError);
-    }
+    };
 
     render() {
-
-        console.log('render')
 
         const {char, loading, error} = this.state;
 
@@ -61,8 +69,8 @@ export default class RandomChar extends Component {
                 {content}
             </div>
         );
-    }
-}
+    };
+};
 
 const View = ({char}) => {
 
@@ -78,7 +86,7 @@ const View = ({char}) => {
             </li>
             <li className="list-group-item d-flex justify-content-between">
                 <span className="term">Born </span>
-                <span className="value">{born}</span>
+                <span className="align_right">{born}</span>
             </li>
             <li className="list-group-item d-flex justify-content-between">
                 <span className="term">Died </span>
@@ -90,5 +98,5 @@ const View = ({char}) => {
             </li>
         </ul>
         </>
-    )
-}
+    );
+};
